@@ -1,12 +1,50 @@
+var enemyMax = 5;
+var enemySpeed = 100;
+var enemyWidth = 101;
+
+var canvasW = 505;
+var canvasH = 606;
+
+var playerWidth = 101;
+var playerMoveX = 101;
+var playerMoveY = 83;
+var playerStartingPos = [canvasW/2 - playerWidth/2, canvasH - 2 * playerWidth] // starting player position centralized on x axis
+
+var dateTime = 0;
+
+// define random position function
+function randomPosition(){
+    var x = Math.floor((Math.random() * 3) + 1);
+    if(x == 1){
+        return 72
+    }
+    else if(x == 2){
+        return 155
+    }
+    else {
+        return 238
+    }
+};
+
+// random speed function
+function randomSpeed(){
+    return Math.floor((Math.random() * 250) + 50);
+};
+
 // Enemies our player must avoid
-var Enemy = function() {
+var Enemy = function(y, speed) {
+    this.x = - randomPosition() - enemyWidth;
+    this.y = randomPosition(); // loc y = 72 || 148 || 238
+    this.speed = randomSpeed();
+
+    allEnemies[allEnemies.length] = this;
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-}
+};
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -14,22 +52,85 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-}
+    // console.log(ctx.canvas.width);
+    if(this.x <= ctx.canvas.width){
+        this.x += this.speed * dt;
+    }
+    else{ // if the enemy reaches the end of the canvas put him back at the beginning
+        this.x = - randomPosition() - enemyWidth;
+        this.y = randomPosition()
+        this.speed = randomSpeed();
+    } 
+
+    // if the player touch enemy, go back to the starting position and take one life
+    if(this.x + enemyWidth/4 >= player.x - playerWidth/2  && this.x <= player.x + playerWidth/2 && this.y == player.y){
+        //console.log("you touched")
+        player.x = playerStartingPos[0];
+        player.y = playerStartingPos[1];
+        player.life--;
+    }
+};
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+    //console.log(ctx)
+};
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
+var Player = function() {
+    this.x = playerStartingPos[0];
+    this.y = playerStartingPos[1];
+    this.life = 4;
+    this.score = 0;
+    //this.lifeImg = 'images/Heart.png';
+    this.sprite = 'images/char-boy.png';
+};
 
+Player.prototype.update = function() {
+    if (this.y <= 0){ // if player reaches water go back to the starting position and increase the score
+        this.x = playerStartingPos[0];
+        this.y = playerStartingPos[1];
+        this.score++
+        console.log(this.score)
+    }
+    //console.log("update")
+};
+
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+Player.prototype.handleInput = function(keycode){
+    if(keycode == 'up' && this.y >= 0){
+        this.y -= playerMoveY;
+    }
+    else if(keycode == 'down' && this.y < canvasH - 2 * playerWidth){
+        this.y += playerMoveY;
+    }
+    else if(keycode == 'left' && this.x > 0){
+        this.x -= playerMoveX;
+    }
+    else if(keycode == 'right' && this.x < canvasW - playerWidth){
+        this.x += playerMoveX;
+    }
+    // console.log(this.y)
+    // console.log(this.x)
+};
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
+var allEnemies = [];
 
+for(i = 0; i < enemyMax; i++){
+    new Enemy;
+    // console.log(allEnemies)
+}
+
+var player = new Player;
 
 
 // This listens for key presses and sends the keys to your
