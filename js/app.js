@@ -1,5 +1,4 @@
 var enemyMax = 5;
-var enemySpeed = 100;
 var enemyWidth = 101;
 
 var canvasW = 505;
@@ -64,10 +63,12 @@ Enemy.prototype.update = function(dt) {
 
     // if the player touch enemy, go back to the starting position and take one life
     if(this.x + enemyWidth/4 >= player.x - playerWidth/2  && this.x <= player.x + playerWidth/2 && this.y == player.y){
-        //console.log("you touched")
+        //console.log("you died")
         player.x = playerStartingPos[0];
         player.y = playerStartingPos[1];
         player.life--;
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // if life changes clear the canvas so you can render new amount of hearts
+        //console.log(player.life)
     }
 };
 
@@ -85,18 +86,25 @@ var Player = function() {
     this.y = playerStartingPos[1];
     this.life = 4;
     this.score = 0;
-    //this.lifeImg = 'images/Heart.png';
+    this.lifeImg = 'images/Heart.png';
     this.sprite = 'images/char-boy.png';
+    //console.log("Player")
 };
 
 Player.prototype.update = function() {
     if (this.y <= 0){ // if player reaches water go back to the starting position and increase the score
         this.x = playerStartingPos[0];
         this.y = playerStartingPos[1];
-        this.score++
-        console.log(this.score)
+        this.score++;
+        console.log(this.score);
     }
-    //console.log("update")
+    // render number of hearts indicating life same as number of lifes
+    pos = 0;
+    for(i = 0; i < this.life; i++){
+        //console.log(this.life)
+        ctx.drawImage(Resources.get(this.lifeImg), pos, 0, 101/3, 171/3); // render hearts with the third of the real img size
+        pos += 101/3;
+    }
 };
 
 Player.prototype.render = function() {
@@ -131,7 +139,6 @@ for(i = 0; i < enemyMax; i++){
 }
 
 var player = new Player;
-
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
