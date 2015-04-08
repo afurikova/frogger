@@ -67,7 +67,7 @@ Enemy.prototype.update = function(dt) {
         player.x = playerStartingPos[0];
         player.y = playerStartingPos[1];
         player.life--;
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // if life changes clear the canvas so you can render new amount of hearts
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // if life changes clear the canvas so new score amount could be added
         //console.log(player.life)
     }
 };
@@ -93,21 +93,28 @@ var Player = function() {
 
 Player.prototype.update = function() {
     if (this.y <= 0){ // if player reaches water go back to the starting position and increase the score
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // if the score changes clear the canvas so new score amount could be added
+        this.score += 100;
         this.x = playerStartingPos[0];
         this.y = playerStartingPos[1];
-        this.score++;
-        console.log(this.score);
-    }
-    // render number of hearts indicating life same as number of lifes
+    }   
+};
+
+Player.prototype.render = function() {
+    // render lifes
     pos = 0;
     for(i = 0; i < this.life; i++){
         //console.log(this.life)
         ctx.drawImage(Resources.get(this.lifeImg), pos, 0, 101/3, 171/3); // render hearts with the third of the real img size
         pos += 101/3;
     }
-};
 
-Player.prototype.render = function() {
+    // render score
+    ctx.textBaseline = 'top';
+    ctx.textAlign="right"; 
+    ctx.font="35px Georgia";
+    ctx.fillText(this.score, canvasW, 10);
+
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
