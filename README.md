@@ -1,4 +1,6 @@
 # Frogger-like arcade game
+play here: http://adica.me.cz/frogger/
+
 My version of the canvas game which is the final project of Object-Oriented JavaScript course on Udacity and also one of the courses of Fronted nanodegree program. I forked the sources according to the instruction from https://github.com/udacity/frontend-nanodegree-arcade-game.
 
 ## Playing the game
