@@ -7,32 +7,32 @@ var canvasH = 606;
 var playerWidth = 101;
 var playerMoveX = 101;
 var playerMoveY = 83;
-var playerStartingPos = [canvasW/2 - playerWidth/2, canvasH - 2 * playerWidth] // starting player position centralized on x axis
+var playerStartingPos = [canvasW / 2 - playerWidth / 2, canvasH - 2 * playerWidth]; // starting player position centralized on x axis
 
 var dateTime = 0;
 
+var allEnemies = [];
+
 // define random position function
-function randomPosition(){
+function randomPosition() {
     var x = Math.floor((Math.random() * 3) + 1);
-    if(x == 1){
-        return 72
+    if (x === 1) {
+        return 72;
     }
-    else if(x == 2){
-        return 155
+    if (x === 2) {
+        return 155;
     }
-    else {
-        return 238
-    }
+    return 238;
 };
 
 // random speed function
-function randomSpeed(){
+function randomSpeed() {
     return Math.floor((Math.random() * 250) + 50);
 };
 
 // Enemies our player must avoid
-var Enemy = function(y, speed) {
-    this.x = - randomPosition() - enemyWidth;
+var Enemy = function() {
+    this.x = -randomPosition() - enemyWidth;
     this.y = randomPosition(); // loc y = 72 || 148 || 238
     this.speed = randomSpeed();
 
@@ -52,17 +52,16 @@ Enemy.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
     // console.log(ctx.canvas.width);
-    if(this.x <= ctx.canvas.width){
+    if (this.x <= ctx.canvas.width) {
         this.x += this.speed * dt;
-    }
-    else{ // if the enemy reaches the end of the canvas put him back at the beginning
-        this.x = - randomPosition() - enemyWidth;
-        this.y = randomPosition()
+    } else { // if the enemy reaches the end of the canvas put him back at the beginning
         this.speed = randomSpeed();
-    } 
+        this.x = -randomPosition() - enemyWidth;
+        this.y = randomPosition();
+    }
 
     // if the player touch enemy, go back to the starting position and take one life
-    if(this.x + enemyWidth/4 >= player.x - playerWidth/2  && this.x <= player.x + playerWidth/2 && this.y == player.y){
+    if (this.x + enemyWidth / 4 >= player.x - playerWidth / 2  && this.x <= player.x + playerWidth / 2 && this.y === player.y) {
         //console.log("you died")
         player.x = playerStartingPos[0];
         player.y = playerStartingPos[1];
@@ -82,6 +81,7 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
+    this.gameActive = true;
     this.x = playerStartingPos[0];
     this.y = playerStartingPos[1];
     this.life = 4;
@@ -92,24 +92,27 @@ var Player = function() {
 };
 
 Player.prototype.update = function() {
-    if (this.y <= 0){ // if player reaches water go back to the starting position and increase the score
+    if (this.y <= 0) { // if player reaches water go back to the starting position and increase the score
         ctx.clearRect(0, 0, canvas.width, canvas.height); // if the score changes clear the canvas so new score amount could be added
         this.score += 100;
         this.x = playerStartingPos[0];
         this.y = playerStartingPos[1];
-    }   
+    }
+    if (player.life === 0) {
+        gameActive = false;
+    }
 };
 
 Player.prototype.render = function() {
-    // render lifes
-    pos = 0;
-    for(i = 0; i < this.life; i++){
+    // display lifes
+    var pos = 0;
+    for (i = 0; i < this.life; i++) {
         //console.log(this.life)
         ctx.drawImage(Resources.get(this.lifeImg), pos, 0, 101/3, 171/3); // render hearts with the third of the real img size
         pos += 101/3;
     }
 
-    // render score
+    // display score
     ctx.textBaseline = 'top';
     ctx.textAlign="right"; 
     ctx.font="35px Georgia";
@@ -119,16 +122,16 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.handleInput = function(keycode){
-    if(keycode == 'up' && this.y >= 0){
+    if (keycode === 'up' && this.y >= 0) {
         this.y -= playerMoveY;
     }
-    else if(keycode == 'down' && this.y < canvasH - 2 * playerWidth){
+    else if (keycode == 'down' && this.y < canvasH - 2 * playerWidth) {
         this.y += playerMoveY;
     }
-    else if(keycode == 'left' && this.x > 0){
+    else if (keycode == 'left' && this.x > 0) {
         this.x -= playerMoveX;
     }
-    else if(keycode == 'right' && this.x < canvasW - playerWidth){
+    else if (keycode == 'right' && this.x < canvasW - playerWidth) {
         this.x += playerMoveX;
     }
     // console.log(this.y)
@@ -138,9 +141,9 @@ Player.prototype.handleInput = function(keycode){
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var allEnemies = [];
 
-for(i = 0; i < enemyMax; i++){
+
+for (i = 0; i < enemyMax; i++) {
     new Enemy;
     // console.log(allEnemies)
 }

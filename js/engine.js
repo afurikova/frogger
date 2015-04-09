@@ -24,6 +24,7 @@ var Engine = (function(global) {
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime;
+        var active = true;
 
     canvas.id = "canvas"
     canvas.width = 505;
@@ -58,7 +59,12 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        win.requestAnimationFrame(main);
+        if(active){
+           win.requestAnimationFrame(main); 
+        } else {
+            reset();
+        }
+        
     };
 
     /* This function does some initial setup that should only occur once,
@@ -93,6 +99,10 @@ var Engine = (function(global) {
      * render methods.
      */
     function updateEntities(dt) {
+        if (player.life == 0){
+            active = false;
+        }
+        
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
@@ -161,8 +171,26 @@ var Engine = (function(global) {
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
      */
-    function reset() {
+
+    function newGame(){
+        win.location.reload();
     }
+
+    function reset() {
+        var button = document.getElementById("reset");
+        button.addEventListener('click', newGame);
+
+        if (active == false){ // when game is over display "Game Over" and score
+            ctx.fillStyle = "rgba(0,0,0,.5)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+            ctx.textAlign="center"; 
+            ctx.font="50px Georgia";
+            ctx.fillText("Game Over", canvas.width/2, canvas.height/2 - 50);
+            ctx.font="30px Georgia";
+            ctx.fillText("You got " + player.score + " points", canvas.width/2, canvas.height/2);
+            }        
+        }
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
@@ -183,4 +211,9 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
+    // var button = document.getElementById("reset");
+    // console.log(button)
+    //button.addEventListener("click", main());
 })(this);
+
+
