@@ -38,7 +38,7 @@ function randomSpeed() {
 // Enemies our player must avoid
 var Enemy = function() {
     this.x = randomXPosition();
-    console.log(this.x)
+    //console.log(this.x)
     this.y = randomYPosition(); // loc y = 72 || 148 || 238
     this.speed = randomSpeed();
 
@@ -102,6 +102,11 @@ Player.prototype.update = function() {
     if (this.y <= 0) {
         ctx.clearRect(0, 0, canvas.width, canvas.height); // if the score changes clear the canvas so new score amount could be added
         this.score += 100;
+
+        if (this.score % 500 == 0){ // if 500 points is achieved a new bug enemy will be added
+            new Enemy;
+        }
+
         enemySpeed += 1;
         this.x = playerStartingPos[0];
         this.y = playerStartingPos[1];
@@ -150,7 +155,7 @@ Player.prototype.handleInput = function(keycode){
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-
+// gen
 for (i = 0; i < enemyMax; i++) {
     new Enemy;
     // console.log(allEnemies)
