@@ -1,5 +1,6 @@
 var enemyMax = 5;
 var enemyWidth = 101;
+var enemySpeed = 0;
 
 var canvasW = 505;
 var canvasH = 606;
@@ -27,7 +28,7 @@ function randomPosition() {
 
 // random speed function
 function randomSpeed() {
-    return Math.floor((Math.random() * 250) + 50);
+    return Math.floor((Math.random() * 50) + 50) + enemySpeed;
 };
 
 // Enemies our player must avoid
@@ -92,9 +93,11 @@ var Player = function() {
 };
 
 Player.prototype.update = function() {
-    if (this.y <= 0) { // if player reaches water go back to the starting position and increase the score
+    // if player reaches water go back to the starting position and increase the score and increase the enemy speed
+    if (this.y <= 0) {
         ctx.clearRect(0, 0, canvas.width, canvas.height); // if the score changes clear the canvas so new score amount could be added
         this.score += 100;
+        enemySpeed += 1;
         this.x = playerStartingPos[0];
         this.y = playerStartingPos[1];
     }
