@@ -15,7 +15,7 @@ var dateTime = 0;
 var allEnemies = [];
 
 // define random position function
-function randomPosition() {
+function randomYPosition() {
     var x = Math.floor((Math.random() * 3) + 1);
     if (x === 1) {
         return 72;
@@ -26,6 +26,10 @@ function randomPosition() {
     return 238;
 };
 
+function randomXPosition() {
+    return -(Math.floor((Math.random() * 500) + 100));
+}
+
 // random speed function
 function randomSpeed() {
     return Math.floor((Math.random() * 50) + 50) + enemySpeed;
@@ -33,8 +37,9 @@ function randomSpeed() {
 
 // Enemies our player must avoid
 var Enemy = function() {
-    this.x = -randomPosition() - enemyWidth;
-    this.y = randomPosition(); // loc y = 72 || 148 || 238
+    this.x = randomXPosition();
+    console.log(this.x)
+    this.y = randomYPosition(); // loc y = 72 || 148 || 238
     this.speed = randomSpeed();
 
     allEnemies[allEnemies.length] = this;
@@ -57,8 +62,8 @@ Enemy.prototype.update = function(dt) {
         this.x += this.speed * dt;
     } else { // if the enemy reaches the end of the canvas put him back at the beginning
         this.speed = randomSpeed();
-        this.x = -randomPosition() - enemyWidth;
-        this.y = randomPosition();
+        this.x = randomXPosition();
+        this.y = randomYPosition();
     }
 
     // if the player touch enemy, go back to the starting position and take one life
